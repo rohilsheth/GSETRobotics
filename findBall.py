@@ -13,17 +13,17 @@ def getBall():
 def findBall():
     sleep(1)
 def turn90Right():
-    motorLeft.run_to_rel_pos(position_sp=410, speed_sp=900, stop_action="hold")
+    motorLeft.run_to_rel_pos(position_sp=460, speed_sp=900, stop_action="hold")
 def turn90Left():
-    motorRight.run_to_rel_pos(position_sp=410, speed_sp=900, stop_action="hold")
+    motorRight.run_to_rel_pos(position_sp=460, speed_sp=900, stop_action="hold")
 
-target = 150
+target = 450
 us = UltrasonicSensor()
 us.mode='US-DIST-CM'
 
 while True:
   dist=us.value()
-  if abs.(dist-target) <= 30:
+  if abs(dist-target) <= 30:
      motorLeft.stop(stop_action='hold')
      motorRight.stop(stop_action='hold')
      turn90Right()
@@ -35,5 +35,41 @@ while True:
      motorRight.run_forever(speed_sp=max(-300,3*(dist-target)))
      motorLeft.run_forever(speed_sp=max(-300,3*(dist-target)))
 
+sleep(0.5)
+
+target = 100
+
+while True:
+  dist=us.value()
+  if abs(dist-target) <= 30:
+     motorLeft.stop(stop_action='hold')
+     motorRight.stop(stop_action='hold')
+     turn90Right()
+     break
+  elif dist > target:
+     motorRight.run_forever(speed_sp=min(300,3*(dist-target)))
+     motorLeft.run_forever(speed_sp=min(300,3*(dist-target)))
+  else:
+     motorRight.run_forever(speed_sp=max(-300,3*(dist-target)))
+     motorLeft.run_forever(speed_sp=max(-300,3*(dist-target)))
+
+sleep(0.5)
+
+#room2 IR scan
+
+motorRight.run_forever(speed_sp=300)
+motorLeft.run_forever(speed_sp=300)
+
 motorLeft.stop(stop_action="break")
 motorRight.stop(stop_action="break")
+
+ir = InfraredSensor()
+ir.mode = 'IR-PROX'
+
+target = 20
+
+while True:
+    distance = ir.value()
+    if abs(distance-target) <= 5:
+        Sound.beep()
+
