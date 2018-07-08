@@ -10,8 +10,8 @@ motorLeft = LargeMotor('outB')
 motorRight = LargeMotor('outC')
 
 
-lineTolerance = 20 #+- 20
-commonSpeed = 100
+lineTolerance = 40 #+- 20
+commonSpeed = 200
 rightSpeed = commonSpeed
 leftSpeed = commonSpeed
 lcd = Screen()
@@ -30,26 +30,28 @@ def runMotor(speedLeft, speedRight):
     
 def followLine():
     sensorVal = lightSensor.value()
-    changeScalar = 2
+    changeScalarRight = .5
+    changeScalarLeft = 1
     global commonSpeed
     global leftSpeed
     global rightSpeed
+    global lineEdgeVal
 
-    if  sensorVal > lineEdgeVal + lineTolerance:
-        rightSpeed += int((abs(lineEdgeVal - sensorVal))/changeScalar)
-        print rightSpeed
+    if  sensorVal > (lineEdgeVal + lineTolerance):
+        rightSpeed += int((abs(lineEdgeVal - sensorVal))/changeScalarRight)
+        print(rightSpeed)
         leftSpeed = commonSpeed
     # turn right?
-    elif sensorVal < lineEdgeVal - lineTolerance:
+    elif sensorVal < (lineEdgeVal - lineTolerance):
     # turn left?
-        leftSpeed += int((abs(lineEdgeVal - sensorVal))/changeScalar)
-        print leftSpeed
+        leftSpeed += int((abs(lineEdgeVal - sensorVal))/changeScalarLeft)
+        print(leftSpeed)
         rightSpeed = commonSpeed
     else:
         leftSpeed = commonSpeed
         rightSpeed = commonSpeed
 
-    runMotor(motorLeft, motorRight)
+    runMotor(leftSpeed, rightSpeed)
 
 
 
