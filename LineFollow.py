@@ -94,7 +94,7 @@ def semiCircle():
     motorRight.stop(stop_action='hold')
 
 def avoidence():
-    if abs(us.value) <= 18 and obsticalHit == False:
+    if abs(us.value()) <= 18 and obsticalHit == False:
         motorLeft.stop(stop_action='hold')
         motorRight.stop(stop_action='hold')
         semiCircle()
@@ -109,9 +109,10 @@ def main():
         # lcd.draw.text((48,13), str(leftSpeed) + ", " + str(rightSpeed))
         # lcd.update()
         # lcd.clear()
-        colorsense()
+
         if inHouse == False:
             followLine()
+            colorsense()
             avoidence()
 
         sleep(.01)
