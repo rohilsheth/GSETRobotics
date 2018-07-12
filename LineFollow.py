@@ -3,13 +3,15 @@
 from ev3dev.ev3 import *
 from time import sleep
 
-lightSensor = LightSensor() 
+lightSensor = LightSensor()
 #lightSensor.mode = 'REFLECT'
 lineEdgeVal = 470 #wanted area
 motorLeft = LargeMotor('outB')
 motorRight = LargeMotor('outC')
 LeftToRight = False
-
+cl = ColorSensor();
+cl.mode = 'COL-COLOR'
+colors=('unknown','black','blue','green','yellow','red','white','brown')
 obsticalHit = False
 
 lineTolerance = 20 #+- 20
@@ -32,7 +34,7 @@ inHouse = False
 def runMotor(speedLeft, speedRight):
     motorLeft.run_forever(speed_sp = min(int(speedLeft), 900))
     motorRight.run_forever(speed_sp= min(int(speedRight), 900))
-    
+
 def followLine():
     counterAdderLeft = 8
     counterAdderRight = 8
@@ -55,7 +57,7 @@ def followLine():
         leftSpeed = -30#100
         rightCounter += counterAdderRight
         leftCounter = 2
-        
+
 
     # turn right?
     elif sensorVal < (lineEdgeVal - lineTolerance):
@@ -83,11 +85,11 @@ def semiCircle():
     motorLeft.run_forever(speed_sp = 500)
     motorLeft.run_forever(speed_sp = 300)
     sleep(5)
-    
+
     motorLeft.run_forever(speed_sp = 300)
     motorLeft.run_forever(speed_sp = -300)
     sleep(2)
-    
+
     motorLeft.stop(stop_action='hold')
     motorRight.stop(stop_action='hold')
 
@@ -97,15 +99,20 @@ def avoidence():
         motorRight.stop(stop_action='hold')
         semiCircle()
         obsticalHit == True
+def colorsense():
+    colorname=colors[cl.value()]
+    if(colorname=="green"):
+        Sound.beep()
 
 def main():
     while True:
         # lcd.draw.text((48,13), str(leftSpeed) + ", " + str(rightSpeed))
         # lcd.update()
         # lcd.clear()
+        colorsense()
         if inHouse == False:
             followLine()
             avoidence()
-        
+
         sleep(.01)
 main(1000)
