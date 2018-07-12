@@ -10,12 +10,16 @@ motorLeft = LargeMotor('outB')
 motorRight = LargeMotor('outC')
 LeftToRight = False
 
+obsticalHit = False
+
 lineTolerance = 20 #+- 20
-commonSpeed = 350
+commonSpeed = 450
 rightSpeed = commonSpeed
 leftSpeed = commonSpeed
 lcd = Screen()
 
+us = UltrasonicSensor()
+us.mode='US-DIST-CM'
 
 Leds.set_color(Leds.LEFT, Leds.GREEN)
 sleep(0.1)
@@ -23,17 +27,18 @@ Leds.set_color(Leds.LEFT, Leds.ORANGE)
 sleep(0.5)
 Leds.set_color(Leds.LEFT, Leds.GREEN)
 
+inHouse = False
 
 def runMotor(speedLeft, speedRight):
     motorLeft.run_forever(speed_sp = min(int(speedLeft), 900))
     motorRight.run_forever(speed_sp= min(int(speedRight), 900))
     
 def followLine():
-    counterAdderLeft = 4
-    counterAdderRight = 4
+    counterAdderLeft = 8
+    counterAdderRight = 8
     sensorVal = lightSensor.value()
-    changeScalarRight = 11
-    changeScalarLeft = 11
+    changeScalarRight = 4
+    changeScalarLeft = 4
     leftCounter = 1
     rightCounter = 1
     global onLeft
@@ -47,9 +52,9 @@ def followLine():
         rightSpeed += int((((abs(lineEdgeVal - sensorVal))/changeScalarRight))/rightCounter)
         # rightSpeed = 450
         print("right speed: " + str(rightSpeed))
-        leftSpeed = -20#100
+        leftSpeed = -30#100
         rightCounter += counterAdderRight
-        leftCounter = 1
+        leftCounter = 2
         
 
     # turn right?
@@ -60,9 +65,9 @@ def followLine():
         onLeft = False
         leftSpeed += int((((abs(lineEdgeVal - sensorVal))/changeScalarLeft))/leftCounter)
         print("left speed: " + str(leftSpeed))
-        rightSpeed = -20
+        rightSpeed = -30
         leftCounter += counterAdderLeft
-        rightCounter = 1
+        rightCounter = 2
     else:
         LeftToRight = False
         onLeft = True
@@ -73,14 +78,34 @@ def followLine():
 
     runMotor(leftSpeed, rightSpeed)
 
+def semiCircle():
 
+    motorLeft.run_forever(speed_sp = 500)
+    motorLeft.run_forever(speed_sp = 300)
+    sleep(5)
+    
+    motorLeft.run_forever(speed_sp = 300)
+    motorLeft.run_forever(speed_sp = -300)
+    sleep(2)
+    
+    motorLeft.stop(stop_action='hold')
+    motorRight.stop(stop_action='hold')
 
+def avoidence():
+    if abs(us.value) <= 18 and obsticalHit == False:
+        motorLeft.stop(stop_action='hold')
+        motorRight.stop(stop_action='hold')
+        semiCircle()
+        obsticalHit == True
 
-def main(shutoff):
+def main():
     while True:
-        lcd.draw.text((48,13), str(leftSpeed) + ", " + str(rightSpeed))
-        lcd.update()
-        lcd.clear()
-        followLine()
+        # lcd.draw.text((48,13), str(leftSpeed) + ", " + str(rightSpeed))
+        # lcd.update()
+        # lcd.clear()
+        if inHouse == False:
+            followLine()
+            avoidence()
+        
         sleep(.01)
 main(1000)
