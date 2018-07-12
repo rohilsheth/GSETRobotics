@@ -116,4 +116,4 @@ def main():
             avoidence()
 
         sleep(.01)
-main(1000)
+main()
