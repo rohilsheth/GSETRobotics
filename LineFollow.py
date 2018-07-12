@@ -78,18 +78,18 @@ def followLine():
 
     runMotor(leftSpeed, rightSpeed)
 
+def semiCircle():
 
-def goAround():
-#CHANGE THIS SHIZZ
-    motorLeft.run_to_rel_pos(position_sp=500, speed_sp=900, stop_action="hold")
+    motorLeft.run_forever(speed_sp = 500)
     motorLeft.run_forever(speed_sp = 300)
-    motorRight.run_forever(speed_sp = 300)
-    sleep(3)
-    motorRight.run_to_rel_pos(position_sp=500, speed_sp=900, stop_action="hold")
+    sleep(5)
+    
     motorLeft.run_forever(speed_sp = 300)
-    motorRight.run_forever(speed_sp = 300)
-    sleep(3)
-    motorLeft.run_to_rel_pos(position_sp=500, speed_sp=900, stop_action="hold")
+    motorLeft.run_forever(speed_sp = -300)
+    sleep(2)
+    
+    motorLeft.stop(stop_action='hold')
+    motorRight.stop(stop_action='hold')
 
 def avoidence():
     if abs(us.value) <= 18 and obsticalHit == False:
